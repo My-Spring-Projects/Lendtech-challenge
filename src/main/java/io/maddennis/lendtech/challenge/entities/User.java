@@ -34,6 +34,13 @@ public class User {
     private String email;
     @NotBlank @Size(max = 120)
     private String password;
+
+    @Column(name="account_balance")
+    private double accountBalance;
+
+    @Column(name = "loan_balance")
+    private double loanBalance;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_roles",

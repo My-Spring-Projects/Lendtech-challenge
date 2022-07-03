@@ -17,6 +17,7 @@ import io.maddennis.lendtech.challenge.repositories.UserRepository;
 import io.maddennis.lendtech.challenge.security.jwt.JwtUtils;
 import io.maddennis.lendtech.challenge.security.services.RefreshTokenService;
 import io.maddennis.lendtech.challenge.security.services.UserDetailsImpl;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +56,7 @@ public class AuthController {
     @Autowired
     RefreshTokenService refreshTokenService;
 
+    @ApiOperation(value="SignIn", notes="Use credentials provided during SignUp")
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
@@ -75,6 +78,7 @@ public class AuthController {
                 userDetails.getUsername(), userDetails.getEmail(), roles));
     }
 
+    @ApiOperation(value="SignUp", notes="Register as a user")
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
@@ -94,20 +98,20 @@ public class AuthController {
 
         if (strRoles == null) {
             Role userRole = roleRepository.findByName(RoleEnum.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    .orElseThrow(() -> new RuntimeException("Error: Role not found."));
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
                     case "admin":
                         Role adminRole = roleRepository.findByName(RoleEnum.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new RuntimeException("Error: Role not found."));
                         roles.add(adminRole);
 
                         break;
                     default:
                         Role userRole = roleRepository.findByName(RoleEnum.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new RuntimeException("Error: Role not found."));
                         roles.add(userRole);
                 }
             });
@@ -119,6 +123,7 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
+    @ApiOperation(value = "Refresh token", notes="Get a new jwt token")
     @PostMapping("/refreshtoken")
     public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
         String requestRefreshToken = request.getRefreshToken();
@@ -134,15 +139,13 @@ public class AuthController {
                         "Refresh token is not in database!"));
     }
 
+    @ApiOperation(value = "SignOut", notes = "End current session")
     @PostMapping("/logout")
-    public ResponseEntity<?> logoutUser(@Valid @RequestBody LogOutRequest logOutRequest) {
+    public ResponseEntity<?> logout(@Valid @RequestBody LogOutRequest logOutRequest) {
         refreshTokenService.deleteByUserId(logOutRequest.getUserId());
         return ResponseEntity.ok(new MessageResponse("Log out successful!"));
     }
 
-    @GetMapping
-    public ResponseEntity<String> currentlyLoggedinUser(){
-        return new ResponseEntity<>("Username", HttpStatus.FOUND);
-    }
+
 }
 
