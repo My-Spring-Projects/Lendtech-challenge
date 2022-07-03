@@ -26,7 +26,7 @@ public class UserController {
 
     @ApiOperation(value = "Account Balance", notes = "Curently logged in user account balance")
     @GetMapping("/userbalance/")
-    public ResponseEntity<Double> loanBalance(@PathVariable String name){
-        return ResponseEntity.ok(userService.accountBalance(name));
+    public ResponseEntity<Double> loanBalance(){
+        return ResponseEntity.ok(userService.accountBalance());
     }
 }

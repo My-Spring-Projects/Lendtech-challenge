@@ -13,12 +13,12 @@ public class UserServiceImpl implements UserService{
     UserRepository userRepository;
 
     @Override
-    public double accountBalance(String name) {
+    public double accountBalance() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getPrincipal();
-            name = userDetails.getUsername();
+            String name = userDetails.getUsername();
         return userRepository.accountBalance(name);
     }
 }
