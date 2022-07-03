@@ -25,7 +25,7 @@ public class SwaggerConfiguration implements WebMvcConfigurer {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("io.maddennis.lendtech.challenge"))
+                .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo());
@@ -34,10 +34,10 @@ public class SwaggerConfiguration implements WebMvcConfigurer {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Lendtech Challenge API")
-                .description("")
-                .version("")
+                .description("lendtech description")
+                .version("1.0.0")
                 .license("Apache 2.0")
-                .licenseUrl("")
+                .licenseUrl("http://dummyurl.io")
                 .contact(new Contact("Lendtech","lendtech.io","info@lendtech.io"))
                 .build();
     }
@@ -52,10 +52,10 @@ public class SwaggerConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/lendtech-challenge/swagger-ui.html**")
+        registry.addResourceHandler("swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/swagger-ui.html");
 
-        registry.addResourceHandler("/lendtech-challenge/webjars/**")
+        registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 }

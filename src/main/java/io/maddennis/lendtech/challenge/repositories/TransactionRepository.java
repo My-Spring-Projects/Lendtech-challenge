@@ -11,8 +11,8 @@ import java.util.Optional;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction,Long> {
-    @Query(value = "select * from transactions t")
+    //native query
     List<Transaction> principalTransactions(String name);
-    @Query(value = "select a.account_balance from users where a.username= :name", nativeQuery = true)
+    //native query
     List<Transaction> filteredPrincipalTransactions(String name);
 }
