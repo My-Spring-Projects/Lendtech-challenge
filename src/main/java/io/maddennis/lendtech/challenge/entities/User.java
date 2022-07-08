@@ -41,6 +41,13 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "user_transactions",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "transaction_id")
+    )
+    private Set<Transaction> transactions = new HashSet<>();
 
     public User(String username, String email, String password) {
         this.username = username;

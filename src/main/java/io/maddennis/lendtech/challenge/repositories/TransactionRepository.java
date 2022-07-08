@@ -9,7 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction,Long> {
-    //Optional<String> fetchPrincipal(long id);
    // Optional<List<Transaction>> principalTransactions(long id);
     //double principalBalance(long id);
     //Optional<List<Transaction>> filteredPrincipalTransactions(long id);

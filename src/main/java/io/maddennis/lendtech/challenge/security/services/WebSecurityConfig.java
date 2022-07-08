@@ -1,7 +1,7 @@
-package io.maddennis.lendtech.challenge.configs.security;
+package io.maddennis.lendtech.challenge.security.services;
 
-import io.maddennis.lendtech.challenge.configs.jwt.AuthEntryPointJwt;
-import io.maddennis.lendtech.challenge.configs.jwt.AuthTokenFilter;
+import io.maddennis.lendtech.challenge.security.jwt.AuthEntryPointJwt;
+import io.maddennis.lendtech.challenge.security.jwt.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,49 +19,44 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
-        prePostEnabled = true,
-        securedEnabled = false,
-        jsr250Enabled = false,
-        proxyTargetClass = false
+        prePostEnabled = true
 )
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserDetailsServiceImpl userDetailsService;
-
+    UserDetailsServiceImpl userDetailsService;
     @Autowired
-    AuthEntryPointJwt unauthorizedHandler;
-
+    private AuthEntryPointJwt unauthorizedHandler;
     @Bean
-    public AuthTokenFilter authenticationTokenFilter(){
+    public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder(10);
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
     @Override
-    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception{
+    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
     @Override
-    @Bean
-    public AuthenticationManager authenticationManager() throws Exception{
-        return super.authenticationManager();
-    }
-
-    @Override
-    public void configure(HttpSecurity httpSecurity) throws Exception{
-        httpSecurity.cors().and().csrf().disable()
+    protected void configure(HttpSecurity http) throws Exception {
+        http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/trasactions/**").fullyAuthenticated()
+                .antMatchers("/api/test/**").permitAll()
                 .anyRequest().authenticated();
 
-        httpSecurity.addFilterBefore(authenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }
