@@ -1,7 +1,9 @@
 package io.maddennis.lendtech.challenge.advice;
 
-import java.util.Date;
+import lombok.Getter;
 
+import java.util.Date;
+@Getter
 public class ErrorMessage {
 
     private int statusCode;
@@ -16,20 +18,5 @@ public class ErrorMessage {
         this.description = description;
     }
 
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 }
 
