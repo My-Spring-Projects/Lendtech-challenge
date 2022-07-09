@@ -7,15 +7,13 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
+@Table(name = "transactions")
 public class Transaction {
 
     @Id
@@ -29,13 +27,12 @@ public class Transaction {
     @Column(precision = 2)
     private double balance;
     private Date transactionTime;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
-            name = "user_transactions",
-            joinColumns = @JoinColumn(name = "transaction_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
+            name = "user_transactions"
+
     )
-    private List<User> users = new ArrayList<>();
+    private User user;
 
     public Transaction(String sender, String recipient, String source, double amount, double balance, Date transactionTime) {
         this.sender = sender;
